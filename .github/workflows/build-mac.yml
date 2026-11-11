@@ -31,7 +31,7 @@ jobs:
       - name: Verify app and create ZIP
         working-directory: mac-dist/ThreeDayStudy-darwin-arm64
         run: |
-          lipo -verify_arch arm64 ThreeDayStudy.app/Contents/MacOS/ThreeDayStudy
+          lipo ThreeDayStudy.app/Contents/MacOS/ThreeDayStudy -verify_arch arm64
           codesign --force --deep --sign - ThreeDayStudy.app
           codesign --verify --deep --strict ThreeDayStudy.app
           ditto -c -k --sequesterRsrc --keepParent ThreeDayStudy.app ../ThreeDayStudy-macOS-arm64.zip
