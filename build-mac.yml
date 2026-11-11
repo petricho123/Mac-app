@@ -1,0 +1,42 @@
+name: Build macOS App
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'mac-app/**'
+      - '.github/workflows/build-mac.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: mac-app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: mac-app/package-lock.json
+      - run: npm ci
+      - run: npm run check
+      - run: npm run package:mac
+      - name: Verify app and create ZIP
+        working-directory: mac-dist/ThreeDayStudy-darwin-arm64
+        run: |
+          lipo -verify_arch arm64 ThreeDayStudy.app/Contents/MacOS/ThreeDayStudy
+          codesign --force --deep --sign - ThreeDayStudy.app
+          codesign --verify --deep --strict ThreeDayStudy.app
+          ditto -c -k --sequesterRsrc --keepParent ThreeDayStudy.app ../ThreeDayStudy-macOS-arm64.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ThreeDayStudy-macOS-arm64
+          path: mac-dist/ThreeDayStudy-macOS-arm64.zip
+          if-no-files-found: error

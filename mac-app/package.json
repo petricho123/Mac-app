@@ -1,0 +1,14 @@
+{
+  "name": "three-day-study-mac",
+  "productName": "ThreeDayStudy",
+  "version": "2.1.0",
+  "private": true,
+  "main": "main.cjs",
+  "scripts": {
+    "check": "node --check main.cjs && node --check web/study-browser.js && node --check web/study.js",
+    "package:mac": "electron-packager . ThreeDayStudy --platform=darwin --arch=arm64 --electron-version=45.3.0 --app-bundle-id=com.petricho.threedaystudy --app-copyright='ThreeDayStudy' --out=../mac-dist --overwrite --asar"
+  },
+  "devDependencies": {
+    "@electron/packager": "20.3.0"
+  }
+}
